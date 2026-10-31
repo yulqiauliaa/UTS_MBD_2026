@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # Service 1: PostgreSQL
+  postgres_yulqi:
+    image: postgres:15-alpine
+    container_name: postgres_yulqi
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - db_network
+
+  # Service 2: PGADMIN4
+  pgadmin_yulqi:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin_yulqi
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "${PGADMIN_PORT}:80"
+    depends_on:
+      - postgres_yulqi
+    networks:
+      - db_network
+
+networks:
+  db_network:
+    driver: bridge
+
+volumes:
+  pgdata:
